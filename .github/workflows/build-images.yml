@@ -14,7 +14,7 @@ jobs:
             matrix: ${{ steps.read.outputs.matrix }}
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
             - name: Read matrix from file
               id: read
               shell: bash
@@ -40,7 +40,7 @@ jobs:
             matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
 
             - name: Install Apptainer
               uses: eWaterCycle/setup-apptainer@v2
