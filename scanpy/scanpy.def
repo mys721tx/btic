@@ -1,0 +1,23 @@
+Bootstrap: docker
+From: python:3.14-trixie
+
+%files
+    requirements.txt /opt/requirements.txt
+
+%post
+    set -e
+
+    python -m pip install --upgrade --root-user-action ignore \
+        pip \
+        setuptools \
+        wheel
+
+    # Install everything from requirements.txt
+    python -m pip install --root-user-action ignore -r /opt/requirements.txt
+
+%environment
+    export OMP_NUM_THREADS=1
+    export OPENBLAS_NUM_THREADS=1
+
+%runscript
+    exec python "$@"
