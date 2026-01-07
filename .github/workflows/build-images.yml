@@ -84,7 +84,7 @@ jobs:
                   fi
 
             - name: Upload SIF artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v6
               with:
                   name: ${{ matrix.name }}-sif
                   path: ${{ matrix.name }}*.sif
