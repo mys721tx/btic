@@ -1,0 +1,90 @@
+name: Build Images
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+    matrix:
+        name: Load build matrix
+        runs-on: ubuntu-latest
+        outputs:
+            matrix: ${{ steps.read.outputs.matrix }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Read matrix from file
+              id: read
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  FILE=".github/image-matrix.json"
+                  if [ ! -f "$FILE" ]; then
+                    echo "Matrix file $FILE not found" >&2
+                    echo "matrix=[]" >> "$GITHUB_OUTPUT"
+                    exit 0
+                  fi
+                  # Validate JSON, compact it, and filter to Apptainer entries only
+                  MATRIX=$(jq -c '[.[] | select(.type=="apptainer")]' "$FILE")
+                  echo "Loaded matrix: $MATRIX"
+                  echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+
+    build:
+        name: Build images
+        needs: matrix
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Install Apptainer
+              uses: eWaterCycle/setup-apptainer@v2
+
+            - name: Build Apptainer image
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  echo "Building SIF for ${{ matrix.name }} from ${{ matrix.name }}/${{ matrix.def }}"
+                  apptainer --version
+
+                  DEF_PATH="${{ matrix.name }}/${{ matrix.def }}"
+                  VERSION="${{ matrix.tag }}"
+
+                  SIF_BASENAME="${{ matrix.name }}"
+                  SIF_NAME="$SIF_BASENAME.sif"
+                  if [ -n "$VERSION" ]; then
+                    echo "Detected version: $VERSION"
+                    SIF_NAME="${SIF_BASENAME}-${VERSION}.sif"
+                  fi
+
+                  apptainer build "$SIF_NAME" "$DEF_PATH"
+
+                  # Tag the built SIF with major, major.minor, and major.minor.patch aliases
+                  if [ -n "$VERSION" ]; then
+                    IFS='.' read -r VERSION_MAJOR VERSION_MINOR VERSION_PATCH <<< "$VERSION"
+                    VERSION_MINOR=${VERSION_MINOR:-0}
+                    VERSION_PATCH=${VERSION_PATCH:-0}
+                    VERSION_TAGS=(
+                      "${VERSION_MAJOR}"
+                      "${VERSION_MAJOR}.${VERSION_MINOR}"
+                      "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+                    )
+
+                    for TAG in "${VERSION_TAGS[@]}"; do
+                      TARGET_NAME="${SIF_BASENAME}-${TAG}.sif"
+                      if [ "$TARGET_NAME" != "$SIF_NAME" ]; then
+                        cp "$SIF_NAME" "$TARGET_NAME"
+                      fi
+                    done
+                  fi
+
+            - name: Upload SIF artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ matrix.name }}-sif
+                  path: ${{ matrix.name }}*.sif
