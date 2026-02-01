@@ -16,6 +16,6 @@ ENTRYPOINT ["python"]
 
 # Labels
 LABEL org.opencontainers.image.authors="Yishen Miao <mys721tx@gmail.com>"
-LABEL org.opencontainers.image.version="1.11.5"
+LABEL org.opencontainers.image.version="1.12.0"
 LABEL org.opencontainers.image.description="This image contains Scanpy and its \
     dependencies installed on top of the Python 3.14 Trixie image."
