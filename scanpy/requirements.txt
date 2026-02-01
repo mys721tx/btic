@@ -13,7 +13,7 @@ scib-metrics==0.5.7
 scikit-image==0.26.0
 scikit-learn==1.8.0
 scikit-misc==0.5.2
-scipy==1.16.3
+scipy==1.17.0
 scipy-stubs==1.17.0.2
 seaborn==0.13.2
 types-seaborn==0.13.2.20251221
