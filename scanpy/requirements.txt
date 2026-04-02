@@ -18,5 +18,5 @@ scipy-stubs==1.17.1.1
 scipy==1.17.1
 seaborn==0.13.2
 types-pytz==2026.1.1.20260304
-types-seaborn==0.13.2.20251221
+types-seaborn==0.13.2.20260402
 typing_extensions==4.15.0
