@@ -14,7 +14,7 @@ scib-metrics==0.5.9
 scikit-image==0.26.0
 scikit-learn==1.8.0
 scikit-misc==0.5.2
-scipy-stubs==1.17.1.1
+scipy-stubs==1.17.1.4
 scipy==1.17.1
 seaborn==0.13.2
 types-pytz==2026.1.1.20260304
