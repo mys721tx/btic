@@ -8,7 +8,7 @@ numpy==2.4.3
 pandas-stubs==3.0.0.260204
 pandas==2.3.3
 python-igraph==1.0.0
-pytz==2026.1.post1
+pytz==2026.2
 scanpy==1.12
 scib-metrics==0.5.9
 scikit-image==0.26.0
