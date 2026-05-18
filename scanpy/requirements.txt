@@ -4,7 +4,7 @@ lxml==6.0.2
 matplotlib==3.10.8
 networkx==3.6.1
 numpy-typing-compat==20251206.2.4
-numpy==2.4.3
+numpy==2.4.5
 pandas-stubs==3.0.0.260204
 pandas==2.3.3
 python-igraph==1.0.0
